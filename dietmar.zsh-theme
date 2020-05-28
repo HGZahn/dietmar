@@ -29,12 +29,12 @@ local pwd="%{$fg[blue]%}%c%{$reset_color%}"
 # Compact SSH-Connection
 if [[ -n $SSH_CONNECTION ]]
 then
-	ssh_con="%{$fg_bold[red]%}(ssh)%{$reset_color%}"
+	ssh_con=" %{$fg_bold[red]%}(ssh)%{$reset_color%}"
 else
 	ssh_con=""
 fi
 
-PROMPT='${time} ${ssh_con} ${user}${host} ${pwd} $(git_prompt_info)'
+PROMPT='${time}${ssh_con} ${user}${host} ${pwd} $(git_prompt_info)'
 
 # i would prefer 1 icon that shows the "most drastic" deviation from HEAD,
 # but lets see how this works out
