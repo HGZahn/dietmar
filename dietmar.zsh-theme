@@ -6,22 +6,16 @@
 # The exit code visual cues will only display once.
 # (i.e. they will be reset, even if you hit enter a few times on empty command prompts)
 
-typeset -A host_repr
-
-# translate hostnames into shortened, colorcoded strings
-host_repr=('dieter-ws-a7n8x-arch' "%{$fg_bold[green]%}ws" 'dieter-p4sci-arch' "%{$fg_bold[blue]%}p4")
-
 # local time, color coded by last return code
 time_enabled="%(?.%{$fg[green]%}.%{$fg[red]%})%*%{$reset_color%}"
 time_disabled="%{$fg[green]%}%*%{$reset_color%}"
 time=$time_enabled
 
-# user part, color coded by privileges
-local user="%(!.%{$fg[blue]%}.%{$fg[blue]%})%n%{$reset_color%}"
+# user part
+local user="%{$fg[blue]%}%n%{$reset_color%}"
 
-# Hostname part.  compressed and colorcoded per host_repr array
-# if not found, regular hostname in default color
-local host="@${host_repr[$HOST]:-$HOST}%{$reset_color%}"
+# Hostname part
+local host="@$HOST%{$reset_color%}"
 
 # Compacted $PWD
 local pwd="%{$fg[blue]%}%c%{$reset_color%}"
@@ -36,8 +30,7 @@ fi
 
 PROMPT='${time}${ssh_con} ${user}${host} ${pwd} $(git_prompt_info)'
 
-# i would prefer 1 icon that shows the "most drastic" deviation from HEAD,
-# but lets see how this works out
+# Git prompt styling
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%} %{$fg[yellow]%}?%{$fg[green]%}%{$reset_color%}"
@@ -50,6 +43,9 @@ return_code=$return_code_enabled
 
 RPS1='${return_code}'
 
+# Custom accept-line handler that clears error indicators on empty prompts
+# When pressing enter on an empty command line, disable the colored timestamp
+# and right-side exit code to avoid visual clutter on subsequent empty prompts
 function accept-line-or-clear-warning () {
 	if [[ -z $BUFFER ]]; then
 		time=$time_disabled
